@@ -1,4 +1,4 @@
-from radical.cm.planner import GAPlanner
+from radical.cm.planner import L2FFPlanner
 import pandas as pd
 import sys
 from time import time
@@ -46,12 +46,12 @@ if __name__ == "__main__":
         print('Current campaign size: %d' % cm_size)
         campaign, num_oper = campaign_creator(num_workflows=cm_size)
         for _ in range(repetitions):
-            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1', random_init=0.5)
+            planner = L2FFPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1')
             tic = time()
             plan = planner.plan()
             toc = time()
             makespan = get_makespan(plan)
-            results.loc[len(results)]= [cm_size, 'GA-50', plan, makespan, toc - tic]
+            results.loc[len(results)]= [cm_size, 'L2FF', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('StHomoCampaigns_4StHomoResourcesGA50.csv', index=False)
+    results.to_csv('StHomoCampaigns_4StHomoResourcesL2FF.csv', index=False)

@@ -1,4 +1,4 @@
-from radical.cm.planner import GAPlanner
+from radical.cm.planner import L2FFPlanner
 import pandas as pd
 import sys
 from time import time
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     resources = [{'id': 1, 'performance': 1},
                  {'id': 2, 'performance': 1},
                  {'id': 3, 'performance': 2},
-                 {'id': 4, 'performance': 3}]
+                 {'id': 4, 'performance': 2}]
     campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
     results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
     total_cmp = pd.read_csv('heterogeneous_campaign.csv')
@@ -47,12 +47,12 @@ if __name__ == "__main__":
         print('Current campaign size: %d' % cm_size)
         campaign, num_oper = df_to_lists(cmp=total_cmp, size=cm_size)
         for _ in range(repetitions):
-            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1', random_init=0.5)
+            planner = L2FFPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1')
             tic = time()
             plan = planner.plan()
             toc = time()
             makespan = get_makespan(plan)
-            results.loc[len(results)]= [cm_size, 'GA-50', plan, makespan, toc - tic]
+            results.loc[len(results)]= [cm_size, 'L2FF', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('StHeteroCampaigns_4St075HeteroResourcesGA50.csv', index=False)
+    results.to_csv('StHeteroCampaigns_4St050HeteroResourcesL2FF.csv', index=False)
