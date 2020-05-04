@@ -47,19 +47,19 @@ if __name__ == "__main__":
 
     repetitions = int(sys.argv[1])
     num_resources = [4, 8, 16, 32, 64, 128]
-    total_resources = pd.read_csv('heterogeneous_resources.csv')
+    total_resources = pd.read_csv('../../Data/heterogeneous_resources.csv')
     campaign, num_oper = campaign_creator(num_workflows=1024)
     results = pd.DataFrame(columns=['size','planner','plan','makespan', 'time'])
     for res_num in num_resources:
         print('Number of resources: %d' % res_num)
         resources = resdf_to_dict(res_df=total_resources, size=res_num)
         for _ in range(repetitions):
-            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper)
+            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1', random_init=0.75)
             tic = time()
             plan = planner.plan()
             toc = time()
             makespan = get_makespan(plan)
-            results.loc[len(results)]= [res_num, 'GA', plan, makespan, toc - tic]
+            results.loc[len(results)]= [res_num, 'GA-25', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('HeteroResources_StHomogeCampaignsGA.csv', index=False)
+    results.to_csv('../../Data/ga/HeteroResources_StHomogeCampaignsGA25.csv', index=False)
