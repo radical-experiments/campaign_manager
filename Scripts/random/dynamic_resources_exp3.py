@@ -6,19 +6,19 @@ import sys
 from time import time
 
 
-def campaign_creator(num_workflows):
+def df_to_lists(cmp, size):
 
-    tmp_campaign = list()
-    tmp_num_oper = list()
-    for i in range(num_workflows):
-        workflow = {'description':None}
-        workflow['id'] = i + 1
-        workflow['num_oper'] = 75000
-        
-        tmp_campaign.append(workflow)
-        tmp_num_oper.append(workflow['num_oper'])
+    tmp_workflows = list()
+    tmp_numoper = list()
+    for i in range(size):
+        point = cmp.loc[i] 
+        workflow = {'description': None}
+        workflow['id'] = int(point['id'])
+        workflow['num_oper'] = point['num_oper']
+        tmp_workflows.append(workflow)
+        tmp_numoper.append(workflow['num_oper'])
 
-    return tmp_campaign, tmp_num_oper
+    return tmp_workflows, tmp_numoper
 
 
 def get_makespan(curr_plan, dyn_resources):
@@ -54,11 +54,12 @@ if __name__ == "__main__":
     dyn_resources = np.load('../../Data/homogeneous_resources_dyn.npy')
     campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
     results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
+    total_cmp = pd.read_csv('../../Data/heterogeneous_campaign.csv')
     for cm_size in campaign_sizes:
         print('Current campaign size: %d' % cm_size)
-        campaign, num_oper = campaign_creator(num_workflows=cm_size)
+        campaign, num_oper = df_to_lists(cmp=total_cmp, size=cm_size)
         for _ in range(repetitions):
-            planner = RandomPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='random_exp')
+            planner = RandomPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='heft_exp')
             tic = time()
             plan = planner.plan()
             toc = time()
@@ -66,4 +67,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [cm_size, 'RANDOM', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../Data/random/StHomoCampaigns_4DynHomoResourcesRAND.csv', index=False)
+    results.to_csv('../../Data/random/StHeteroCampaigns_4DynHomoResourcesRAND.csv', index=False)

@@ -1,4 +1,4 @@
-from radical.cm.planner import HeftPlanner
+from radical.cm.planner import GAPlanner
 from random import gauss
 import pandas as pd
 import numpy as np
@@ -53,8 +53,8 @@ def get_makespan(curr_plan, dyn_resources):
 if __name__ == "__main__":
 
     repetitions = int(sys.argv[1])
-    dyn_resources = np.load('../../Data/homogeneous_resources_dyn.npy')
-    total_resources = pd.read_csv('../../Data/heterogeneous_resources.csv')
+    dyn_resources = np.load('../../../Data/homogeneous_resources_dyn.npy')
+    total_resources = pd.read_csv('../../../Data/heterogeneous_resources.csv')
     num_resources = [4, 8, 16, 32, 64, 128]
     results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
     campaign, num_oper = campaign_creator(num_workflows=1024)
@@ -62,12 +62,12 @@ if __name__ == "__main__":
         print('Number of resources: %d' % res_num)
         resources = resdf_to_dict(res_df=total_resources, size=res_num)
         for _ in range(repetitions):
-            planner = HeftPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1')
+            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1', random_init=0.50)
             tic = time()
             plan = planner.plan()
             toc = time()
             makespan = get_makespan(plan, dyn_resources[0:res_num,:])
-            results.loc[len(results)]= [res_num, 'HEFT', plan, makespan, toc - tic]
+            results.loc[len(results)]= [res_num, 'GA50', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../Data/heft/DynFixedHomoResources_StHomoCampaignsHEFT.csv', index=False)
+    results.to_csv('../../../Data/ga/perc_050/DynFixedHomoResources_StHomoCampaignsGA50.csv', index=False)

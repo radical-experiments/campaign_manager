@@ -1,4 +1,5 @@
 from radical.cm.planner import GAPlanner
+from random import gauss
 import pandas as pd
 import numpy as np
 import sys
@@ -30,9 +31,10 @@ def get_makespan(curr_plan, dyn_resources):
     for placement in curr_plan:
         workflow = placement[0]
         resource_id = placement[1]['id']
-        resource_usage[resource_id - 1] += workflow['num_oper'] / \
-                                           dyn_resources[resource_id - 1,
-                                                         tmp_idx[resource_id - 1]]
+        resource_usage[resource_id - 1] += workflow['num_oper'] / gauss(1, 4900 / 76000)
+        #resource_usage[resource_id - 1] += workflow['num_oper'] / \
+        #                                   dyn_resources[resource_id - 1,
+        #                                                 tmp_idx[resource_id - 1]]
         tmp_idx[resource_id - 1] += 1
 
     return max(resource_usage)
@@ -45,7 +47,7 @@ if __name__ == "__main__":
                  {'id': 2, 'performance': 1},
                  {'id': 3, 'performance': 1},
                  {'id': 4, 'performance': 1}]
-    dyn_resources = np.load('../../Data/homogeneous_resources_dyn.npy')
+    dyn_resources = np.load('../../../Data/homogeneous_resources_dyn.npy')
     campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
     results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
     for cm_size in campaign_sizes:
@@ -60,4 +62,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [cm_size, 'GA', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../Data/DynHomoCampaigns_4StHomoResourcesGA.csv', index=False)
+    results.to_csv('../../../Data/ga/perc_100/StHomoCampaigns_4DynHomoResourcesGA.csv', index=False)

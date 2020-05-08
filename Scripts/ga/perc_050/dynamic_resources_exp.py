@@ -1,4 +1,4 @@
-from radical.cm.planner import RandomPlanner
+from radical.cm.planner import GAPlanner
 from random import gauss
 import pandas as pd
 import numpy as np
@@ -24,10 +24,6 @@ def campaign_creator(num_workflows):
 def get_makespan(curr_plan, dyn_resources):
     '''
     Calculate makespan
-    "[({'description': None, 'id': 1, 'num_oper': 75000}, {'id': 1, 'performance': 1}, 0, 75000.0), 
-      ({'description': None, 'id': 2, 'num_oper': 75000}, {'id': 2, 'performance': 1}, 0, 75000.0),
-      ({'description': None, 'id': 3, 'num_oper': 75000}, {'id': 3, 'performance': 1}, 0, 75000.0),
-      ({'description': None, 'id': 4, 'num_oper': 75000}, {'id': 4, 'performance': 1}, 0, 75000.0)]"
     '''
 
     resource_usage = [0] * len(dyn_resources)
@@ -51,19 +47,19 @@ if __name__ == "__main__":
                  {'id': 2, 'performance': 1},
                  {'id': 3, 'performance': 1},
                  {'id': 4, 'performance': 1}]
-    dyn_resources = np.load('../../Data/homogeneous_resources_dyn.npy')
-    campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
+    dyn_resources = np.load('../../../Data/homogeneous_resources_dyn.npy')
+    res_sizes = [4, 8, 16, 32, 64, 128]
+    campaign, num_oper = campaign_creator(num_workflows=1024)
     results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
     for cm_size in campaign_sizes:
         print('Current campaign size: %d' % cm_size)
-        campaign, num_oper = campaign_creator(num_workflows=cm_size)
         for _ in range(repetitions):
-            planner = RandomPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='random_exp')
+            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1', random_init=0.50)
             tic = time()
             plan = planner.plan()
             toc = time()
             makespan = get_makespan(plan, dyn_resources[0:cm_size,:])
-            results.loc[len(results)]= [cm_size, 'RANDOM', plan, makespan, toc - tic]
+            results.loc[len(results)]= [cm_size, 'GA50', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../Data/random/StHomoCampaigns_4DynHomoResourcesRAND.csv', index=False)
+    results.to_csv('../../../Data/ga/perc_050/StHomoCampaigns_4DynHomoResourcesGA50.csv', index=False)
