@@ -42,17 +42,17 @@ if __name__ == "__main__":
                  {'id': 4, 'performance': 1}]
     campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
     results = pd.DataFrame(columns=['size','planner','plan','makespan', 'time'])
-    total_cmp = pd.read_csv('heterogeneous_campaign.csv')
+    total_cmp = pd.read_csv('../../../Data/heterogeneous_campaign.csv')
     for cm_size in campaign_sizes:
         print('Current campaign size: %d' % cm_size)
         campaign, num_oper = df_to_lists(cmp=total_cmp, size=cm_size)
         for _ in range(repetitions):
-            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1', random_init=0.5)
+            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1', random_init=0.75)
             tic = time()
             plan = planner.plan()
             toc = time()
             makespan = get_makespan(plan)
-            results.loc[len(results)]= [cm_size, 'GA-50', plan, makespan, toc - tic]
+            results.loc[len(results)]= [cm_size, 'GA-25', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('StHeteroCampaigns_4StHomoResourcesGA50.csv', index=False)
+    results.to_csv('../../../Data/ga/perc_075/StHeteroCampaigns_4StHomoResourcesGA25.csv', index=False)

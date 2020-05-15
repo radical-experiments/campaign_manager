@@ -24,7 +24,8 @@ def resdf_to_dict(res_df, size):
     for i in range(size):
         point = res_df.loc[i]
         tmp_res = {'id': int(point['id']),
-                   'performance': 1.0}
+                   'performance': point['performance']}
+                   #'performance': 1.0}
         tmp_resources.append(tmp_res)
 
     return tmp_resources
@@ -63,4 +64,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [res_num, 'L2FF', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../Data/l2ff/HomogeResources_StHeteroCampaignsL2FF.csv', index=False)
+    results.to_csv('../../Data/l2ff/HeteroResources_StHeteroCampaignsL2FF.csv', index=False)

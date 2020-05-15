@@ -1,4 +1,4 @@
-from radical.cm.planner import GAPlanner
+from radical.cm.planner import HeftPlanner
 from random import gauss
 import pandas as pd
 import numpy as np
@@ -20,14 +20,20 @@ def df_to_lists(cmp, size):
 
     return tmp_workflows, tmp_numoper
 
+def resdf_to_dict(res_df, size):
+
+    tmp_resources = list()
+    for i in range(size):
+        point = res_df.loc[i]
+        tmp_res = {'id': int(point['id']),
+                   'performance': 1.0}
+        tmp_resources.append(tmp_res)
+
+    return tmp_resources
 
 def get_makespan(curr_plan, dyn_resources):
     '''
     Calculate makespan
-    "[({'description': None, 'id': 1, 'num_oper': 75000}, {'id': 1, 'performance': 1}, 0, 75000.0), 
-      ({'description': None, 'id': 2, 'num_oper': 75000}, {'id': 2, 'performance': 1}, 0, 75000.0),
-      ({'description': None, 'id': 3, 'num_oper': 75000}, {'id': 3, 'performance': 1}, 0, 75000.0),
-      ({'description': None, 'id': 4, 'num_oper': 75000}, {'id': 4, 'performance': 1}, 0, 75000.0)]"
     '''
 
     resource_usage = [0] * len(dyn_resources)
@@ -47,24 +53,22 @@ def get_makespan(curr_plan, dyn_resources):
 if __name__ == "__main__":
 
     repetitions = int(sys.argv[1])
-    resources = [{'id': 1, 'performance': 1},
-                 {'id': 2, 'performance': 1},
-                 {'id': 3, 'performance': 1},
-                 {'id': 4, 'performance': 1}]
-    dyn_resources = np.load('../../../Data/homogeneous_resources_dyn.npy')
-    campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
+    dyn_resources = np.load('../../Data/homogeneous_resources_dyn.npy')
+    total_resources = pd.read_csv('../../Data/heterogeneous_resources.csv')
+    total_cmp = pd.read_csv('../../Data/heterogeneous_campaign.csv')
+    num_resources = [4, 8, 16, 32, 64, 128]
     results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
-    total_cmp = pd.read_csv('../../../Data/heterogeneous_campaign.csv')
-    for cm_size in campaign_sizes:
-        print('Current campaign size: %d' % cm_size)
-        campaign, num_oper = df_to_lists(cmp=total_cmp, size=cm_size)
+    campaign, num_oper = df_to_lists(cmp=total_cmp, size=1024)
+    for res_num in num_resources:
+        print('Number of resources: %d' % res_num)
+        resources = resdf_to_dict(res_df=total_resources, size=res_num)
         for _ in range(repetitions):
-            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1', random_init=1)
+            planner = HeftPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1')
             tic = time()
             plan = planner.plan()
             toc = time()
-            makespan = get_makespan(plan, dyn_resources[0:cm_size,:])
-            results.loc[len(results)]= [cm_size, 'GA', plan, makespan, toc - tic]
+            makespan = get_makespan(plan, dyn_resources[0:res_num,:])
+            results.loc[len(results)]= [res_num, 'HEFT', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../../Data/ga/perc_100/StHeteroCampaigns_4DynFixedHomoResourcesGA.csv', index=False)
+    results.to_csv('../../Data/heft/DynFixedHomoResources_StHHeteroCampaignsHEFT.csv', index=False)

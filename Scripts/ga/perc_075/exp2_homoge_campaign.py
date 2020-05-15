@@ -24,7 +24,8 @@ def resdf_to_dict(res_df, size):
     for i in range(size):
         point = res_df.loc[i]
         tmp_res = {'id': int(point['id']),
-                   'performance': point['performance']}
+                   'performance': 1.0}
+                   #'performance': point['performance']}
         tmp_resources.append(tmp_res)
 
     return tmp_resources
@@ -47,7 +48,7 @@ if __name__ == "__main__":
 
     repetitions = int(sys.argv[1])
     num_resources = [4, 8, 16, 32, 64, 128]
-    total_resources = pd.read_csv('../../Data/heterogeneous_resources.csv')
+    total_resources = pd.read_csv('../../../Data/heterogeneous_resources.csv')
     campaign, num_oper = campaign_creator(num_workflows=1024)
     results = pd.DataFrame(columns=['size','planner','plan','makespan', 'time'])
     for res_num in num_resources:
@@ -62,4 +63,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [res_num, 'GA-25', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../Data/ga/HeteroResources_StHomogeCampaignsGA25.csv', index=False)
+    results.to_csv('../../../Data/ga/perc_075/HomogeResources_StHomogeCampaignsGA25.csv', index=False)

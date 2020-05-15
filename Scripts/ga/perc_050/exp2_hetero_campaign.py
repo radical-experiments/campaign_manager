@@ -24,7 +24,8 @@ def resdf_to_dict(res_df, size):
     for i in range(size):
         point = res_df.loc[i]
         tmp_res = {'id': int(point['id']),
-                   'performance': 1.0}
+                   #'performance': 1.0}
+                   'performance': point['performance']}
         tmp_resources.append(tmp_res)
 
     return tmp_resources
@@ -47,20 +48,20 @@ if __name__ == "__main__":
 
     repetitions = int(sys.argv[1])
     num_resources = [4, 8, 16, 32, 64, 128]
-    total_resources = pd.read_csv('../../Data/heterogeneous_resources.csv')
-    total_cmp = pd.read_csv('../../Data/heterogeneous_campaign.csv')
+    total_resources = pd.read_csv('../../../Data/heterogeneous_resources.csv')
+    total_cmp = pd.read_csv('../../../Data/heterogeneous_campaign.csv')
     campaign, num_oper = df_to_lists(cmp=total_cmp, size=1024)
     results = pd.DataFrame(columns=['size','planner','plan','makespan', 'time'])
     for res_num in num_resources:
         print('Number of resources: %d' % res_num)
         resources = resdf_to_dict(res_df=total_resources, size=res_num)
         for _ in range(repetitions):
-            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, random_init=1.0, sid='ga_exps')
+            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, random_init=0.5, sid='ga_exps')
             tic = time()
             plan = planner.plan()
             toc = time()
             makespan = get_makespan(plan)
-            results.loc[len(results)]= [res_num, 'GA', plan, makespan, toc - tic]
+            results.loc[len(results)]= [res_num, 'GA-50', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../Data/ga/perc_100/HomogeResources_StHeteroCampaignsGA.csv', index=False)
+    results.to_csv('../../../Data/ga/perc_050/HeteroResources_StHeteroCampaignsGA50.csv', index=False)

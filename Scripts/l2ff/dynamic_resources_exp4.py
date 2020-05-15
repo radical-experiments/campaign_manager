@@ -6,19 +6,19 @@ import sys
 from time import time
 
 
-def campaign_creator(num_workflows):
+def df_to_lists(cmp, size):
 
-    tmp_campaign = list()
-    tmp_num_oper = list()
-    for i in range(num_workflows):
-        workflow = {'description':None}
-        workflow['id'] = i + 1
-        workflow['num_oper'] = 75000
-        
-        tmp_campaign.append(workflow)
-        tmp_num_oper.append(workflow['num_oper'])
+    tmp_workflows = list()
+    tmp_numoper = list()
+    for i in range(size):
+        point = cmp.loc[i] 
+        workflow = {'description': None}
+        workflow['id'] = int(point['id'])
+        workflow['num_oper'] = point['num_oper']
+        tmp_workflows.append(workflow)
+        tmp_numoper.append(workflow['num_oper'])
 
-    return tmp_campaign, tmp_num_oper
+    return tmp_workflows, tmp_numoper
 
 def resdf_to_dict(res_df, size):
 
@@ -44,7 +44,7 @@ def get_makespan(curr_plan, dyn_resources):
         resource_usage[resource_id - 1] += workflow['num_oper'] / gauss(1, 4900 / 76000)
         #resource_usage[resource_id - 1] += workflow['num_oper'] / \
         #                                   dyn_resources[resource_id - 1,
-        #                                             tmp_idx[resource_id - 1]]
+        #                                                 tmp_idx[resource_id - 1]]
         tmp_idx[resource_id - 1] += 1
 
     return max(resource_usage)
@@ -55,14 +55,15 @@ if __name__ == "__main__":
     repetitions = int(sys.argv[1])
     dyn_resources = np.load('../../Data/homogeneous_resources_dyn.npy')
     total_resources = pd.read_csv('../../Data/heterogeneous_resources.csv')
+    total_cmp = pd.read_csv('../../Data/heterogeneous_campaign.csv')
     num_resources = [4, 8, 16, 32, 64, 128]
     results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
-    campaign, num_oper = campaign_creator(num_workflows=1024)
+    campaign, num_oper = df_to_lists(cmp=total_cmp, size=1024)
     for res_num in num_resources:
         print('Number of resources: %d' % res_num)
         resources = resdf_to_dict(res_df=total_resources, size=res_num)
         for _ in range(repetitions):
-            planner = L2FFPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1')
+            planner = L2FFPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='l2ff_exp')
             tic = time()
             plan = planner.plan()
             toc = time()
@@ -70,4 +71,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [res_num, 'L2FF', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../Data/l2ff/DynHomoResources_StHomoCampaignsL2FF.csv', index=False)
+    results.to_csv('../../Data/l2ff/DynHomoResources_StHeteroCampaignsL2FF.csv', index=False)

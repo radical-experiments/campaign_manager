@@ -31,10 +31,10 @@ def get_makespan(curr_plan, dyn_resources):
     for placement in curr_plan:
         workflow = placement[0]
         resource_id = placement[1]['id']
-        resource_usage[resource_id - 1] += workflow['num_oper'] / gauss(1, 4900 / 76000)
-        #resource_usage[resource_id - 1] += workflow['num_oper'] / \
-        #                                   dyn_resources[resource_id - 1,
-        #                                                 tmp_idx[resource_id - 1]]
+        #resource_usage[resource_id - 1] += workflow['num_oper'] / gauss(1, 4900 / 76000)
+        resource_usage[resource_id - 1] += workflow['num_oper'] / \
+                                           dyn_resources[resource_id - 1,
+                                                         tmp_idx[resource_id - 1]]
         tmp_idx[resource_id - 1] += 1
 
     return max(resource_usage)
@@ -62,4 +62,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [cm_size, 'GA', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../../Data/ga/perc_100/StHomoCampaigns_4DynHomoResourcesGA.csv', index=False)
+    results.to_csv('../../../Data/ga/perc_100/StHomoCampaigns_4DynFixedHomoResourcesGA.csv', index=False)

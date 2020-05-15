@@ -67,7 +67,7 @@ if __name__ == "__main__":
             plan = planner.plan()
             toc = time()
             makespan = get_makespan(plan, dyn_resources[0:res_num,:])
-            results.loc[len(results)]= [res_num, 'GA25', plan, makespan, toc - tic]
+            results.loc[len(results)]= [res_num, 'GA-25', plan, makespan, toc - tic]
             del planner
 
     results.to_csv('../../../Data/ga/perc_075/DynFixedHomoResources_StHomoCampaignsGA25.csv', index=False)

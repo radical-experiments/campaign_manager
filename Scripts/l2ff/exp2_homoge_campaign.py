@@ -26,6 +26,7 @@ def resdf_to_dict(res_df, size):
         point = res_df.loc[i]
         tmp_res = {'id': int(point['id']),
                    'performance': point['performance']}
+                   #'performance': 1.0}
         tmp_resources.append(tmp_res)
 
     return tmp_resources

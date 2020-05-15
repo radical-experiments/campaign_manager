@@ -54,4 +54,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [cm_size, 'GA-50', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('StHomoCampaigns_4StHomoResourcesGA50.csv', index=False)
+    results.to_csv('../../../Data/ga/perc_050/StHomoCampaigns_4StHomoResourcesGA50.csv', index=False)

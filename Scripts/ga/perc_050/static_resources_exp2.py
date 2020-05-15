@@ -42,7 +42,7 @@ if __name__ == "__main__":
                  {'id': 4, 'performance': 1}]
     campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
     results = pd.DataFrame(columns=['size','planner','plan','makespan', 'time'])
-    total_cmp = pd.read_csv('heterogeneous_campaign.csv')
+    total_cmp = pd.read_csv('../../../Data/heterogeneous_campaign.csv')
     for cm_size in campaign_sizes:
         print('Current campaign size: %d' % cm_size)
         campaign, num_oper = df_to_lists(cmp=total_cmp, size=cm_size)
@@ -55,4 +55,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [cm_size, 'GA-50', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('StHeteroCampaigns_4StHomoResourcesGA50.csv', index=False)
+    results.to_csv('../../../Data/ga/perc_050/StHeteroCampaigns_4StHomoResourcesGA50.csv', index=False)

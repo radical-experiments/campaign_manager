@@ -12,7 +12,7 @@ def df_to_lists(cmp, size):
         point = cmp.loc[i] 
         workflow = {'description': None}
         workflow['id'] = int(point['id'])
-        workflow['num_oper'] = point['num_oper']
+        workflow['num_oper'] = 75000
         tmp_workflows.append(workflow)
         tmp_numoper.append(workflow['num_oper'])
 
@@ -42,12 +42,12 @@ if __name__ == "__main__":
                  {'id': 4, 'performance': 3}]
     campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
     results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
-    total_cmp = pd.read_csv('heterogeneous_campaign.csv')
+    total_cmp = pd.read_csv('../../Data/heterogeneous_campaign.csv')
     for cm_size in campaign_sizes:
         print('Current campaign size: %d' % cm_size)
         campaign, num_oper = df_to_lists(cmp=total_cmp, size=cm_size)
         for _ in range(repetitions):
-            planner = HeftPlanner(campaign=campaign, resources=resources, num_oper=num_oper)
+            planner = HeftPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='heft_exp')
             tic = time()
             plan = planner.plan()
             toc = time()
@@ -55,4 +55,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [cm_size, 'HEFT', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('StHeteroCampaigns_4St075HeteroResourcesHEFT.csv', index=False)
+    results.to_csv('../../Data/heft/StHomogeCampaigns_4St075HeteroResourcesHEFT.csv', index=False)

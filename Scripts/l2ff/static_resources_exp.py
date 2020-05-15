@@ -54,4 +54,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [cm_size, 'L2FF', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('StHomoCampaigns_4StHomoResourcesL2FF.csv', index=False)
+    results.to_csv('../../Data/l2ff/StHomoCampaigns_4StHomoResourcesL2FF.csv', index=False)

@@ -46,7 +46,7 @@ if __name__ == "__main__":
         print('Current campaign size: %d' % cm_size)
         campaign, num_oper = campaign_creator(num_workflows=cm_size)
         for _ in range(repetitions):
-            planner = HeftPlanner(campaign=campaign, resources=resources, num_oper=num_oper)
+            planner = HeftPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='heft_exp')
             tic = time()
             plan = planner.plan()
             toc = time()
@@ -54,4 +54,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [cm_size, 'HEFT', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('StHomoCampaigns_4StHomoResourcesHEFT.csv', index=False)
+    results.to_csv('../../Data/heft/StHomoCampaigns_4StHomoResourcesHEFT.csv', index=False)
