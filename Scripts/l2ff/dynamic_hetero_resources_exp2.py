@@ -1,8 +1,9 @@
-from radical.cm.planner import HeftPlanner
+from radical.cm.planner import L2FFPlanner
+from random import gauss
 import pandas as pd
+import numpy as np
 import sys
 from time import time
-from random import gauss
 
 
 def campaign_creator(num_workflows):
@@ -18,7 +19,6 @@ def campaign_creator(num_workflows):
         tmp_num_oper.append(workflow['num_oper'])
 
     return tmp_campaign, tmp_num_oper
-
 
 def resdf_to_dict(res_df, size, prev_set=None):
 
@@ -42,38 +42,43 @@ def resdf_to_dict(res_df, size, prev_set=None):
             tmp_resources.append(tmp_res)
         return prev_set + tmp_resources
 
-def get_makespan(curr_plan):
+def get_makespan(curr_plan, dyn_resources, used_resources):
+    '''
+    Calculate makespan
+    '''
 
-    checkpoints = [0]
+    resource_usage = [0] * len(dyn_resources)
+    tmp_idx = [0] * len(dyn_resources)
+    for placement in curr_plan:
+        workflow = placement[0]
+        resource_id = placement[1]['id']
+        perf = used_resources[resource_id - 1]['performance']
+        resource_usage[resource_id - 1] += workflow['num_oper'] / gauss(perf, perf * 0.0644)
+        
+        tmp_idx[resource_id - 1] += 1
 
-    for work in curr_plan:
-        if work[2] not in checkpoints:
-            checkpoints.append(work[2])
-        if work[3] not in checkpoints:
-            checkpoints.append(work[3])
-
-    checkpoints.sort()
-    return checkpoints[-1]
+    return max(resource_usage)
 
 
 if __name__ == "__main__":
 
     repetitions = int(sys.argv[1])
-    num_resources = [4, 8, 16, 32, 64, 128]
+    dyn_resources = np.load('../../Data/homogeneous_resources_dyn.npy')
     total_resources = pd.read_csv('../../Data/heterogeneous_resources.csv')
+    num_resources = [4, 8, 16, 32, 64, 128]
+    results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
     campaign, num_oper = campaign_creator(num_workflows=1024)
-    results = pd.DataFrame(columns=['size','planner','plan','makespan', 'time'])
     resources = None
     for res_num in num_resources:
         print('Number of resources: %d' % res_num)
         resources = resdf_to_dict(res_df=total_resources, size=res_num, prev_set=resources)
         for _ in range(repetitions):
-            planner = HeftPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='heft_exp')
+            planner = L2FFPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='test1')
             tic = time()
             plan = planner.plan()
             toc = time()
-            makespan = get_makespan(plan)
-            results.loc[len(results)]= [res_num, 'HEFT', plan, makespan, toc - tic]
+            makespan = get_makespan(plan, dyn_resources[0:res_num,:], used_resources=resources)
+            results.loc[len(results)]= [res_num, 'L2FF', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../Data/heft/HeteroResources_StHomogeCampaignsHEFT.csv', index=False)
+    results.to_csv('../../Data/l2ff/DynHeteroResources_StHomoCampaignsL2FF.csv', index=False)

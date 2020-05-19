@@ -14,10 +14,10 @@ The following table explain the experiments executed:
 | 6   | Heterogeneous | Heterogeneous | Resources | No      | Done   |
 | 7   | Homogeneous   | Homogeneous   | Campaign  | Yes     | Done   |
 | 8   | Heterogeneous | Homogeneous   | Campaign  | Yes     | Done   |
-| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     |    |
+| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     | Done   |
 | 10  | Homogeneous   | Homogeneous   | Resources | Yes     | Done   |
 | 11  | Heterogeneous | Homogeneous   | Resources | Yes     | Done   |
-| 12  | Heterogeneous | Heterogeneous | Resources | Yes     |    |
+| 12  | Heterogeneous | Heterogeneous | Resources | Yes     | Done   |
 
 ## GA
 
@@ -32,10 +32,10 @@ The following table explain the experiments executed:
 | 6   | Heterogeneous | Heterogeneous | Resources | No      | Done   |
 | 7   | Homogeneous   | Homogeneous   | Campaign  | Yes     | Done   |
 | 8   | Heterogeneous | Homogeneous   | Campaign  | Yes     | Done   |
-| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     |    |
+| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     | Done   |
 | 10  | Homogeneous   | Homogeneous   | Resources | Yes     | Done   |
 | 11  | Heterogeneous | Homogeneous   | Resources | Yes     | Done   |
-| 12  | Heterogeneous | Heterogeneous | Resources | Yes     |    |
+| 12  | Heterogeneous | Heterogeneous | Resources | Yes     | Done   |
 
 ## GA-25
 
@@ -50,10 +50,10 @@ The following table explain the experiments executed:
 | 6   | Heterogeneous | Heterogeneous | Resources | No      | Done   |
 | 7   | Homogeneous   | Homogeneous   | Campaign  | Yes     | Done   |
 | 8   | Heterogeneous | Homogeneous   | Campaign  | Yes     | Done   |
-| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     |    |
+| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     | Done   |
 | 10  | Homogeneous   | Homogeneous   | Resources | Yes     | Done   |
 | 11  | Heterogeneous | Homogeneous   | Resources | Yes     | Done   |
-| 12  | Heterogeneous | Heterogeneous | Resources | Yes     |    |
+| 12  | Heterogeneous | Heterogeneous | Resources | Yes     | Done   |
 
 ## GA-50
 
@@ -68,10 +68,10 @@ The following table explain the experiments executed:
 | 6   | Heterogeneous | Heterogeneous | Resources | No      | Done   |
 | 7   | Homogeneous   | Homogeneous   | Campaign  | Yes     | Done   |
 | 8   | Heterogeneous | Homogeneous   | Campaign  | Yes     | Done   |
-| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     |    |
+| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     | Done   |
 | 10  | Homogeneous   | Homogeneous   | Resources | Yes     | Done   |
 | 11  | Heterogeneous | Homogeneous   | Resources | Yes     | Done   |
-| 12  | Heterogeneous | Heterogeneous | Resources | Yes     |    |
+| 12  | Heterogeneous | Heterogeneous | Resources | Yes     | Done   |
 
 ## L2FF
 
@@ -86,10 +86,10 @@ The following table explain the experiments executed:
 | 6   | Heterogeneous | Heterogeneous | Resources | No      | Done   |
 | 7   | Homogeneous   | Homogeneous   | Campaign  | Yes     | Done   |
 | 8   | Heterogeneous | Homogeneous   | Campaign  | Yes     | Done   |
-| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     |    |
+| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     | Done   |
 | 10  | Homogeneous   | Homogeneous   | Resources | Yes     | Done   |
 | 11  | Heterogeneous | Homogeneous   | Resources | Yes     | Done   |
-| 12  | Heterogeneous | Heterogeneous | Resources | Yes     |    |
+| 12  | Heterogeneous | Heterogeneous | Resources | Yes     | Done   |
 
 ## RANDOM
 
@@ -104,7 +104,7 @@ The following table explain the experiments executed:
 | 6   | Heterogeneous | Heterogeneous | Resources | No      | Done   |
 | 7   | Homogeneous   | Homogeneous   | Campaign  | Yes     | Done   |
 | 8   | Heterogeneous | Homogeneous   | Campaign  | Yes     | Done   |
-| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     |    |
+| 9   | Heterogeneous | Heterogeneous | Campaign  | Yes     | Done   |
 | 10  | Homogeneous   | Homogeneous   | Resources | Yes     | Done   |
 | 11  | Heterogeneous | Homogeneous   | Resources | Yes     | Done   |
-| 12  | Heterogeneous | Heterogeneous | Resources | Yes     |    |
+| 12  | Heterogeneous | Heterogeneous | Resources | Yes     | Done   |
