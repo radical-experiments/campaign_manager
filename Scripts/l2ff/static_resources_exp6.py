@@ -36,10 +36,10 @@ def get_makespan(curr_plan):
 if __name__ == "__main__":
 
     repetitions = int(sys.argv[1])
-    resources = [{'id': 1, 'performance': 1},
-                 {'id': 2, 'performance': 2},
-                 {'id': 3, 'performance': 3},
-                 {'id': 4, 'performance': 4}]
+    resources = [{'id': 1, 'performance': 1.3},
+                 {'id': 2, 'performance': 2.76},
+                 {'id': 3, 'performance': 23.516},
+                 {'id': 4, 'performance': 10.68}]
     campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
     results = pd.DataFrame(columns=['size','planner','plan','makespan', 'time'])
     total_cmp = pd.read_csv('../../Data/heterogeneous_campaign.csv')
@@ -55,4 +55,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [cm_size, 'L2FF', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../Data/l2ff/StHeteroCampaigns_4St100HeteroResourcesL2FF.csv', index=False)
+    results.to_csv('../../Data/l2ff/StHeteroCampaigns_4St100HeteroResourcesL2FF2.csv', index=False)
