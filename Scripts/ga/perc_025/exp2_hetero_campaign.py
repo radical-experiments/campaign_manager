@@ -1,9 +1,8 @@
 from radical.cm.planner import GAPlanner
-from random import gauss, uniform
 import pandas as pd
-import numpy as np
 import sys
 from time import time
+from random import gauss
 
 
 def df_to_lists(cmp, size):
@@ -38,51 +37,44 @@ def resdf_to_dict(res_df, size, prev_set=None):
             point = res_df.loc[i % 4]
             tmp_res = {'id': len(prev_set) + i + 1,
                        #'performance': 1.0}
-                       'performance': gauss(point['PFlops Mean'], point['Pflops STD'])}
+                       'performance': point['PFlops Mean']}
+                       #'performance': gauss(point['PFlops Mean'], point['Pflops STD'])}
             tmp_resources.append(tmp_res)
         return prev_set + tmp_resources
 
-def get_makespan(curr_plan, dyn_resources, used_resources, workflow_inaccur):
-    '''
-    Calculate makespan
-    '''
+def get_makespan(curr_plan):
 
-    resource_usage = [0] * len(dyn_resources)
-    tmp_idx = [0] * len(dyn_resources)
-    for placement in curr_plan:
-        workflow = placement[0]
-        resource_id = placement[1]['id']
-        perf = used_resources[resource_id - 1]['performance']
-        resource_usage[resource_id - 1] += (workflow['num_oper'] * (1 + uniform(0, workflow_inaccur))) / gauss(perf, perf * 0.0644)
-        
-        tmp_idx[resource_id - 1] += 1
+    checkpoints = [0]
 
-    return max(resource_usage)
+    for work in curr_plan:
+        if work[2] not in checkpoints:
+            checkpoints.append(work[2])
+        if work[3] not in checkpoints:
+            checkpoints.append(work[3])
+
+    checkpoints.sort()
+    return checkpoints[-1]
 
 
 if __name__ == "__main__":
 
     repetitions = int(sys.argv[1])
-    workflow_inaccur = float(sys.argv[2]) / 100
-    print(workflow_inaccur)
-    dyn_resources = np.load('../../../Data/homogeneous_resources_dyn.npy')
+    num_resources = [4, 8, 16, 32, 64, 128]
     total_resources = pd.read_csv('../../../Data/heterogeneous_resources.csv')
     total_cmp = pd.read_csv('../../../Data/heterogeneous_campaign.csv')
-    num_resources = [4, 8, 16, 32, 64, 128]
-    results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
     campaign, num_oper = df_to_lists(cmp=total_cmp, size=1024)
+    results = pd.DataFrame(columns=['size','planner','plan','makespan', 'time'])
     resources = None
     for res_num in num_resources:
         print('Number of resources: %d' % res_num)
         resources = resdf_to_dict(res_df=total_resources, size=res_num, prev_set=resources)
         for _ in range(repetitions):
-            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, random_init=0.5, sid='ga_exps')
+            planner = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, random_init=0.25, sid='ga_exps')
             tic = time()
             plan = planner.plan()
             toc = time()
-            planner._logger.close()
-            makespan = get_makespan(plan, dyn_resources[0:res_num,:], used_resources=resources, workflow_inaccur=workflow_inaccur)
-            results.loc[len(results)]= [res_num, 'GA-50', plan, makespan, toc - tic]
+            makespan = get_makespan(plan)
+            results.loc[len(results)]= [res_num, 'GA-75', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../../Data/ga/perc_050/DynHeteroResources_StHeteroCampaignsGA50_inaccur_p%sperc.csv' % (sys.argv[2]), index=False)
+    results.to_csv('../../../Data/ga/perc_025/SpHeteroResources_StHeteroCampaignsGA75.csv', index=False)

@@ -25,21 +25,23 @@ def get_makespan(curr_plan, dyn_resources, used_resources, workflow_inaccur):
     '''
     Calculate makespan
     '''
-
+    inaccur_list = []
     resource_usage = [0] * len(dyn_resources)
     tmp_idx = [0] * len(dyn_resources)
     for placement in curr_plan:
         workflow = placement[0]
         resource_id = placement[1]['id']
         perf = used_resources[resource_id - 1]['performance']
-        resource_usage[resource_id - 1] += (workflow['num_oper'] * (1 + uniform(-workflow_inaccur, workflow_inaccur))) / gauss(perf, perf * 0.0644)
+        inaccur = uniform(0, workflow_inaccur)
+        resource_usage[resource_id - 1] += (workflow['num_oper'] * (1 + inaccur)) / gauss(perf, perf * 0.0644)
+        inaccur_list.append(inaccur)
         #resource_usage[resource_id - 1] += workflow['num_oper'] / \
         #                                   dyn_resources[resource_id - 1,
         #                                                 tmp_idx[resource_id - 1]]
         
         tmp_idx[resource_id - 1] += 1
 
-    return max(resource_usage)
+    return max(resource_usage), inaccur_list
 
 
 if __name__ == "__main__":
@@ -57,7 +59,7 @@ if __name__ == "__main__":
                  {'id': 4, 'performance': 23.516}]
     dyn_resources = np.load('../../Data/homogeneous_resources_dyn.npy')
     campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
-    results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
+    results = pd.DataFrame(columns=['size','planner','plan', 'AccuracyList','makespan','time'])
     total_cmp = pd.read_csv('../../Data/heterogeneous_campaign.csv')
     for cm_size in campaign_sizes:
         print('Current campaign size: %d' % cm_size)
@@ -68,8 +70,8 @@ if __name__ == "__main__":
             plan = planner.plan()
             toc = time()
             planner._logger.close()
-            makespan = get_makespan(plan, dyn_resources[0:cm_size,:], used_resources=resources, workflow_inaccur=workflow_inaccur)
-            results.loc[len(results)]= [cm_size, 'HEFT', plan, makespan, toc - tic]
+            makespan, inaccur = get_makespan(plan, dyn_resources[0:cm_size,:], used_resources=resources, workflow_inaccur=workflow_inaccur)
+            results.loc[len(results)]= [cm_size, 'HEFT', plan, inaccur, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../Data/heft/StHeteroCampaigns_4DynHeteroResourcesHEFT_inaccur_%sperc.csv' % (sys.argv[2]), index=False)
+    results.to_csv('../../Data/heft/StHeteroCampaigns_4DynHeteroResourcesHEFT_inaccur_p%sperc.csv' % (sys.argv[2]), index=False)

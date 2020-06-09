@@ -32,7 +32,7 @@ def get_makespan(curr_plan, dyn_resources, used_resources, workflow_inaccur):
         workflow = placement[0]
         resource_id = placement[1]['id']
         perf = used_resources[resource_id - 1]['performance']
-        resource_usage[resource_id - 1] += (workflow['num_oper'] * (1 + uniform(-workflow_inaccur, workflow_inaccur))) / gauss(perf, perf * 0.0644)
+        resource_usage[resource_id - 1] += (workflow['num_oper'] * (1 + uniform(0, workflow_inaccur))) / gauss(perf, perf * 0.0644)
         #resource_usage[resource_id - 1] += workflow['num_oper'] / \
         #                                   dyn_resources[resource_id - 1,
         #                                                 tmp_idx[resource_id - 1]]
@@ -72,4 +72,4 @@ if __name__ == "__main__":
             results.loc[len(results)]= [cm_size, 'GA-50', plan, makespan, toc - tic]
             del planner
 
-    results.to_csv('../../../Data/ga/perc_050/StHeteroCampaigns_4DynHeteroResourcesGA50_inaccur_%sperc.csv' % (sys.argv[2]), index=False)
+    results.to_csv('../../../Data/ga/perc_050/StHeteroCampaigns_4DynHeteroResourcesGA50_inaccur_p%sperc.csv' % (sys.argv[2]), index=False)
