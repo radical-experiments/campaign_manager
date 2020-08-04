@@ -11,7 +11,7 @@ def df_to_lists(cmp, size):
     tmp_workflows = list()
     tmp_numoper = list()
     for i in range(size):
-        point = gauss(75000, 6000) 
+        point = 75000 # gauss(75000, 6000) 
         workflow = {'description': None}
         workflow['id'] = int(i + 1)
         workflow['num_oper'] = point
@@ -26,7 +26,7 @@ def resdf_to_dict(res_df, size):
     for i in range(size):
         point = res_df.loc[randint(0,3)]
         tmp_res = {'id': i + 1,
-                   'performance': point['PFlops Mean']}
+                   'performance': 1}
         tmp_resources.append(tmp_res)
     return tmp_resources
 
@@ -70,6 +70,8 @@ if __name__ == "__main__":
     total_cmp = pd.read_csv('../Data/heterogeneous_campaign.csv')
     num_resources = [4, 8, 16, 32, 64, 128, 256]
     resultsHEFT = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
+    resultsGA00 = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
+    resultsGA25 = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
     resultsGA50 = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
     resultsL2FF = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
     resultsRAND = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
@@ -83,6 +85,8 @@ if __name__ == "__main__":
             planner2 = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='ga50', random_init=0.5)
             planner3 = L2FFPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='l2ff')
             planner4 = RandomPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='random')
+            planner5 = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='ga00', random_init=1.0)
+            planner6 = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='ga25', random_init=0.75)
 
             tic = time()
             plan = planner1.plan()
@@ -95,6 +99,18 @@ if __name__ == "__main__":
             toc = time()
             makespan, reactive, expected = get_makespan(plan, res_num, 0, dynamic_res=True)
             resultsGA50.loc[len(resultsGA50)] = [res_num, 'GA-50', plan, makespan, reactive, expected, makespan - expected, reactive - expected, toc-tic]
+            
+            tic = time()
+            plan = planner5.plan()
+            toc = time()
+            makespan, reactive, expected = get_makespan(plan, res_num, 0, dynamic_res=True)
+            resultsGA00.loc[len(resultsGA00)] = [res_num, 'GA', plan, makespan, reactive, expected, makespan - expected, reactive - expected, toc-tic]
+            
+            tic = time()
+            plan = planner6.plan()
+            toc = time()
+            makespan, reactive, expected = get_makespan(plan, res_num, 0, dynamic_res=True)
+            resultsGA25.loc[len(resultsGA25)] = [res_num, 'GA-25', plan, makespan, reactive, expected, makespan - expected, reactive - expected, toc-tic]
 
             tic = time()
             plan = planner3.plan()
@@ -108,9 +124,11 @@ if __name__ == "__main__":
             makespan, reactive, expected = get_makespan(plan, res_num, 0, dynamic_res=True)
             resultsRAND.loc[len(resultsRAND)] = [res_num, 'RANDOM', plan, makespan, reactive, expected, makespan - expected, reactive - expected, toc-tic]
 
-            del planner1, planner2, planner3, planner4
+            del planner1, planner2, planner3, planner4, planner5, planner6
 
-    resultsHEFT.to_csv('../Data/heft/DynHeteroResources_StHeteroCampaignsHEFT_new.csv', index=False)
-    resultsGA50.to_csv('../Data/ga/perc_050/DynHeteroResources_StHeteroCampaignsGA50_new.csv', index=False)
-    resultsL2FF.to_csv('../Data/l2ff/DynHeteroResources_StHeteroCampaignsL2FF_new.csv', index=False)
-    resultsRAND.to_csv('../Data/random/DynHeteroResources_StHeteroCampaignsRAND_new.csv', index=False)
+    resultsHEFT.to_csv('../Data/heft/DynHomoResources_StHomoCampaignsHEFT_new.csv', index=False)
+    resultsGA50.to_csv('../Data/ga/perc_050/DynHomoResources_StHomoCampaignsGA50_new.csv', index=False)
+    resultsGA25.to_csv('../Data/ga/perc_075/DynHomoResources_StHomoCampaignsGA25_new.csv', index=False)
+    resultsGA00.to_csv('../Data/ga/perc_100/DynHomoResources_StHomoCampaignsGA00_new.csv', index=False)
+    resultsL2FF.to_csv('../Data/l2ff/DynHomoResources_StHomoCampaignsL2FF_new.csv', index=False)
+    resultsRAND.to_csv('../Data/random/DynHomoResources_StHomoCampaignsRAND_new.csv', index=False)

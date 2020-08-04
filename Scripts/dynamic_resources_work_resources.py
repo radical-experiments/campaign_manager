@@ -11,7 +11,7 @@ def df_to_lists(size):
     tmp_workflows = list()
     tmp_numoper = list()
     for i in range(size):
-        point = gauss(75000, 6000)
+        point = 75000 # gauss(75000, 6000)
         workflow = {'description': None}
         workflow['id'] = int(i + 1)
         workflow['num_oper'] = point
@@ -57,15 +57,19 @@ def get_makespan(curr_plan, num_resources, workflow_inaccur, positive=False, dyn
 if __name__ == "__main__":
 
     repetitions = int(sys.argv[1])
-    resources = [{'id': 1, 'performance': 1.3},
-                 {'id': 2, 'performance': 2.76},
-                 {'id': 3, 'performance': 10.68},
-                 {'id': 4, 'performance': 23.516}]
-    campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
-    resultsHEFT = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected','mpn_snt', 'rect_snt', 'time'])
-    resultsGA50 = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected','mpn_snt', 'rect_snt', 'time'])
-    resultsL2FF = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected','mpn_snt', 'rect_snt', 'time'])
-    resultsRAND = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected','mpn_snt', 'rect_snt', 'time'])
+    resources = [{'id': 1, 'performance': 1},
+                 {'id': 2, 'performance': 1},
+                 {'id': 3, 'performance': 1},
+                 {'id': 4, 'performance': 1}]
+    campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
+
+    resultsHEFT = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
+    resultsGA00 = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
+    resultsGA25 = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
+    resultsGA50 = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
+    resultsL2FF = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
+    resultsRAND = pd.DataFrame(columns=['size', 'planner', 'plan', 'makespan', 'reactive', 'expected', 'mpn_snt', 'rect_snt', 'time'])
+
     for cm_size in campaign_sizes:
         print('Current campaign size: %d' % cm_size)
         for _ in range(repetitions):
@@ -74,6 +78,8 @@ if __name__ == "__main__":
             planner2 = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='ga50', random_init=0.5)
             planner3 = L2FFPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='l2ff')
             planner4 = RandomPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='random')
+            planner5 = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='ga00', random_init=1.0)
+            planner6 = GAPlanner(campaign=campaign, resources=resources, num_oper=num_oper, sid='ga25', random_init=0.75)
             
             tic = time()
             plan = planner1.plan()
@@ -98,10 +104,24 @@ if __name__ == "__main__":
             toc = time()
             makespan, reactive, expected = get_makespan(plan, 4, 0, dynamic_res=True)
             resultsRAND.loc[len(resultsRAND)] = [cm_size, 'RANDOM', plan, makespan, reactive, expected, makespan - expected, reactive - expected, toc-tic]
+                        
+            tic = time()
+            plan = planner5.plan()
+            toc = time()
+            makespan, reactive, expected = get_makespan(plan, 4, 0, dynamic_res=True)
+            resultsGA00.loc[len(resultsGA00)] = [cm_size, 'GA', plan, makespan, reactive, expected, makespan - expected, reactive - expected, toc-tic]
+            
+            tic = time()
+            plan = planner6.plan()
+            toc = time()
+            makespan, reactive, expected = get_makespan(plan, 4, 0, dynamic_res=True)
+            resultsGA25.loc[len(resultsGA25)] = [cm_size, 'GA-25', plan, makespan, reactive, expected, makespan - expected, reactive - expected, toc-tic]
 
-            del planner1, planner2, planner3, planner4
+            del planner1, planner2, planner3, planner4, planner5, planner6
 
-    resultsHEFT.to_csv('../Data/heft/StHeteroCampaigns_4DynHeteroResourcesHEFT_new.csv', index=False)
-    resultsGA50.to_csv('../Data/ga/perc_050/StHeteroCampaigns_4DynHeteroResourcesGA50_new.csv', index=False)
-    resultsL2FF.to_csv('../Data/l2ff/StHeteroCampaigns_4DynHeteroResourcesL2FF_new.csv', index=False)
-    resultsRAND.to_csv('../Data/random/StHeteroCampaigns_4DynHeteroResourcesRAND_new.csv', index=False)
+    resultsHEFT.to_csv('../Data/heft/StHomoCampaigns_4DynHomoResourcesHEFT_new.csv', index=False)
+    resultsGA50.to_csv('../Data/ga/perc_050/StHomoCampaigns_4DynHomoResourcesGA50_new.csv', index=False)
+    resultsGA25.to_csv('../Data/ga/perc_075/StHomoCampaigns_4DynHomoResourcesGA25_new.csv', index=False)
+    resultsGA00.to_csv('../Data/ga/perc_100/StHomoCampaigns_4DynHomoResourcesGA00_new.csv', index=False)
+    resultsL2FF.to_csv('../Data/l2ff/StHomoCampaigns_4DynHomoResourcesL2FF_new.csv', index=False)
+    resultsRAND.to_csv('../Data/random/StHomoCampaigns_4DynHomoResourcesRAND_new.csv', index=False)

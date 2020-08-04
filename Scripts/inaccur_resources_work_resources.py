@@ -102,7 +102,7 @@ if __name__ == "__main__":
 
             del planner1, planner2, planner3, planner4
 
-    resultsHEFT.to_csv('../Data/heft/StHeteroCampaigns_4DynHeteroResourcesHEFT_inaccur%d_new.csv' % sys.argv[2], index=False)
-    resultsGA50.to_csv('../Data/ga/perc_050/StHeteroCampaigns_4DynHeteroResourcesGA50_inaccur%d_new.csv' % sys.argv[2], index=False)
-    resultsL2FF.to_csv('../Data/l2ff/StHeteroCampaigns_4DynHeteroResourcesL2FF_inaccur%d_new.csv' % sys.argv[2], index=False)
-    resultsRAND.to_csv('../Data/random/StHeteroCampaigns_4DynHeteroResourcesRAND_inaccur%d_new.csv' % sys.argv[2], index=False)
+    resultsHEFT.to_csv('../Data/heft/StHeteroCampaigns_4StHeteroResourcesHEFT_inaccur%d_new.csv' % sys.argv[2], index=False)
+    resultsGA50.to_csv('../Data/ga/perc_050/StHeteroCampaigns_4StHeteroResourcesGA50_inaccur%d_new.csv' % sys.argv[2], index=False)
+    resultsL2FF.to_csv('../Data/l2ff/StHeteroCampaigns_4StHeteroResourcesL2FF_inaccur%d_new.csv' % sys.argv[2], index=False)
+    resultsRAND.to_csv('../Data/random/StHeteroCampaigns_4StHeteroResourcesRAND_inaccur%d_new.csv' % sys.argv[2], index=False)

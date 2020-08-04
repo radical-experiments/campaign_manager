@@ -1,5 +1,5 @@
 from radical.cm.planner import HeftPlanner
-from random import gauss
+from random import gauss, uniform
 import pandas as pd
 import numpy as np
 import sys
@@ -21,25 +21,37 @@ def df_to_lists(cmp, size):
     return tmp_workflows, tmp_numoper
 
 
-def get_makespan(curr_plan, dyn_resources, used_resources):
+def get_makespan(curr_plan, num_resources, workflow_inaccur, positive=False, dynamic_res=False):
     '''
     Calculate makespan
     '''
-
-    resource_usage = [0] * len(dyn_resources)
-    tmp_idx = [0] * len(dyn_resources)
+    under = False
+    reactive_resource_usage = [0] * num_resources
+    resource_usage = [0] * num_resources
+    expected = [0] * num_resources
+    tmp_idx = [0] * num_resources
     for placement in curr_plan:
         workflow = placement[0]
-        resource_id = placement[1]['id']
-        perf = used_resources[resource_id - 1]['performance']
-        resource_usage[resource_id - 1] += workflow['num_oper'] / gauss(perf, perf * 0.0644)
-        #resource_usage[resource_id - 1] += workflow['num_oper'] / \
-        #                                   dyn_resources[resource_id - 1,
-        #                                                 tmp_idx[resource_id - 1]]
-        
-        tmp_idx[resource_id - 1] += 1
+        resource = placement[1]
+        resource_id = resource['id']
+        expected_finish = placement[3]
+        if dynamic_res:
+            perf = gauss(resource['performance'], resource['performance'] * 0.0644)
+        else:
+            pref = resource['performance']
 
-    return max(resource_usage)
+        if positive:
+            inaccur = uniform(0, workflow_inaccur)
+        else:
+            inaccur = uniform(-workflow_inaccur, workflow_inaccur)
+
+        exec_time = (workflow['num_oper'] * (1 + inaccur)) / perf
+        reactive_resource_usage[resource_id - 1] += exec_time
+        resource_usage[resource_id - 1] = max(resource_usage[resource_id - 1] + exec_time, expected_finish)
+        expected[resource_id - 1] = expected_finish
+           
+        tmp_idx[resource_id - 1] += 1
+    return max(resource_usage), max(reactive_resource_usage), max(expected)
 
 
 if __name__ == "__main__":
@@ -54,8 +66,8 @@ if __name__ == "__main__":
                  {'id': 3, 'performance': 10.68},
                  {'id': 4, 'performance': 23.516}]
     dyn_resources = np.load('../../Data/homogeneous_resources_dyn.npy')
-    campaign_sizes = [4, 8, 16, 32, 64, 128, 256, 512, 1024]
-    results = pd.DataFrame(columns=['size','planner','plan','makespan','time'])
+    campaign_sizes = [2048]
+    results = pd.DataFrame(columns=['size','planner','plan','makespan', 'reactive', 'expected','mpn_snt', 'rect_snt', 'time'])
     total_cmp = pd.read_csv('../../Data/heterogeneous_campaign.csv')
     for cm_size in campaign_sizes:
         print('Current campaign size: %d' % cm_size)
@@ -65,8 +77,8 @@ if __name__ == "__main__":
             tic = time()
             plan = planner.plan()
             toc = time()
-            makespan = get_makespan(plan, dyn_resources[0:cm_size,:], used_resources=resources)
-            results.loc[len(results)]= [cm_size, 'HEFT', plan, makespan, toc - tic]
+            makespan, reactive, expected = get_makespan(plan, 4, 0, dynamic_res=True)
+            results.loc[len(results)] = [cm_size, 'HEFT', plan, makespan, reactive, expected, makespan - expected, reactive - expected, time]
             del planner
 
-    results.to_csv('../../Data/heft/StHeteroCampaigns_4DynHeteroResourcesHEFT.csv', index=False)
+    results.to_csv('../../Data/heft/StHeteroCampaigns_4DynHeteroResourcesHEFT2.csv', index=False)
